@@ -1,0 +1,1 @@
+gcc -o main main.c calc.c read.c write.c
