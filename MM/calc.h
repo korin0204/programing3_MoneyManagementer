@@ -2,8 +2,8 @@
 #define _CALC_H_
  
 //  関数avgのプロトタイプ宣言
-double add_money(double,double);
-double sub_money(double,double);
-double avg(double,double);
+long add_money(long,long);
+long sub_money(long,long);
+long avg(long,long);
  
 #endif // _CALC_H_
