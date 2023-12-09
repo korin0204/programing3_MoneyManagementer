@@ -12,7 +12,6 @@ moneyData user = {0, 0, 0, 0};
 
 int main()
 {
-    // 楽しくお金を管理してレベルアップしよう
     time_t current = time(NULL);
     struct tm *timer = localtime(&current);
     // お知らせ表示

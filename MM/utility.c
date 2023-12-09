@@ -87,7 +87,7 @@ void make_dir(void)
 	char dir[200];
 	int n = 0;
     while(n <= 2){
-sprintf(dir, "./archives/%d/%02d", year, month);
+    sprintf(dir, "./archives/%d/%02d", year, month);
 	if (mkdir(dir, 0777) == -1)
 	{
 		sprintf(dir, "./archives/%d", year);
@@ -128,38 +128,6 @@ int count_lines(const char *path)
 		}
 		fclose(fp);
 		return count;
-	}
-}
-
-// //unsigned int 型の変数の値をtxtファイルに出力する関数
-// void write_uint(unsigned int a, const char *path)
-// {
-// 	FILE *fp;
-// 	fp = fopen(path, "w");
-// 	if (fp == NULL)
-// 	{
-// 		printf("ファイルをオープンできません。\n");
-// 	}
-// 	else
-// 	{
-// 		fprintf(fp, "%u", a);
-// 		fclose(fp);
-// 	}
-// }
-
-//unsigned int 型の変数の値をバイナリファイルに出力する関数
-void write_uint(unsigned int a, const char *path)
-{
-	FILE *fp;
-	fp = fopen(path, "wb");
-	if (fp == NULL)
-	{
-		printf("ファイルをオープンできません。\n");
-	}
-	else
-	{
-		fwrite(&a, sizeof(unsigned int), 1, fp);
-		fclose(fp);
 	}
 }
 

@@ -160,32 +160,77 @@ void edit_money()
 	}
 	printf("編集したい行を入力して下さい\n");
 	scanf("%d", &lineNo);
+
 	//新規ファイルを生成する
 	FILE *newfile;
-	sprintf(GlobalFilename,"./archives/%d/%02d/0000%d%02d%02d.csv", GlobalYear, GlobalMonth, GlobalYear, GlobalMonth, GlobalDay);
-	newfile = fopen(GlobalFilename, "w");
+	char newFilename[200];
+	sprintf(newFilename,"./archives/%d/%02d/0000%d%02d%02d.csv", GlobalYear, GlobalMonth, GlobalYear, GlobalMonth, GlobalDay);
+	newfile = fopen(newFilename, "w");
 	if (newfile == NULL)
 	{
 		printf("ファイルを開けませんでした。\n");
 	}
+
 	//編集したい行までの内容を新規ファイルにコピーする
-	for (int i = 0; i < lineNo; i++)
+	for (int i = 0; i < lineNo-1; i++)
 	{
 		fgets(line, sizeof(line), file);
 		fprintf(newfile, "%s", line);
 	}
+	int prelineNo;
+	long preincomes;
+	long preexpenses;
+	char prestr[256];
+	fgets(line, sizeof(line), file);
+	sscanf(line,"%d,%ld,%ld,%s",&prelineNo,&preincomes,&preexpenses,prestr);
+	fprintf(newfile, "%d,%ld,%ld,%s\n", prelineNo, preincomes, preexpenses, prestr);
 	//構造体のNoと同じ行を追加する
+	long incomes_tmp;
+	long expenses_tmp;
+	char str_tmp[256];
+	int tmp;
 	long incomes;
 	long expenses;
 	printf("収入を入力して下さい\n");
-	scanf("%ld", &incomes);
+	scanf("%ld", &incomes_tmp);
 	printf("支出を入力して下さい\n");
-	scanf("%ld", &expenses);
-	fprintf(newfile, "%d,%ld,%ld,0\n", lineNo, incomes, expenses);
+	scanf("%ld", &expenses_tmp);
+	printf("タグを入力して下さい\n");
+	scanf("%s", str_tmp);
+	fprintf(newfile, "%d,%ld,%ld,%s\n", lineNo, preincomes + incomes_tmp, preexpenses + expenses_tmp, str_tmp);
 	//編集したい行以降の内容を新規ファイルにコピーする
 	fgets(line, sizeof(line), file);
-	for (int i = lineNo + 1; fgets(line, sizeof(line), file) != NULL; i++){
-		fprintf(newfile, "%s", line);
+	int difflineNo;
+	long diffincomes;
+	long diffexpenses;
+	char diffstr[256];
+	sscanf(line,"%d,%ld,%ld,%s",&difflineNo,&diffincomes,&diffexpenses,diffstr);
+	diffincomes = preincomes + incomes_tmp - diffincomes;
+	diffexpenses = preexpenses + expenses_tmp - diffexpenses;
+
+	char s[256];
+
+	while (fgets(line, sizeof(line), file) != NULL) {
+	if(sscanf(line,"%d,%ld,%ld,%s",&lineNo,&incomes,&expenses,s) == 4){
+		fprintf(newfile, "%d,%ld,%ld,%s\n", lineNo , incomes + diffincomes, expenses + diffexpenses, s);
+		
 	}
+	}
+
+// 編集したい行の値を求めることが難しい
+// 差を取る必要がある
+// 表示系の修正
+// for (i = 0; i < n; i++){printf(i+1 - i)}
+// 1行めは1-0 タグなどもそのまま書ける
+
+
+
+	// fgets(line, sizeof(line), file);
+	// for (int i = lineNo + 1; fgets(line, sizeof(line), file) != NULL; i++){
+	// 	fprintf(newfile, "%s", line);
+	// }
 	fclose(file);
+	remove(GlobalFilename);
+	fclose(newfile);
+	rename(newFilename, GlobalFilename);
 }

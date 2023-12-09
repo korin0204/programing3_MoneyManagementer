@@ -24,7 +24,7 @@ void read_money(void){
 		    printf("ファイルをオープンできません。\n");
 	        else{
                 printf("ファイルをオープン。\n");
-				for (int i = 1; i < lineNumber; i++) {
+				for (int i = 0; i < lineNumber; i++) {
                 fgets(line, sizeof(line), fp);
 				}
 				fgets(line, sizeof(line), fp); // 指定した行を読み込む
@@ -50,9 +50,24 @@ void read_all_money(void){
 		printf("ファイルを開けませんでした。\n");
 	}
 	printf("読み込んだ行\n");
+	int lineNo1;
+	long incomes1;
+	long expenses1;
+	char str1[256];
+	int lineNo2;
+	long incomes2;
+	long expenses2;
+	char str2[256];
+	fgets(line, sizeof(line), file);
+	sscanf(line,"%d,%ld,%ld,%s",&lineNo1,&incomes1,&expenses1,str1);
 	while (fgets(line, sizeof(line), file) != NULL) {
-		printf("%s", line);
-	}
+		sscanf(line,"%d,%ld,%ld,%s",&lineNo2,&incomes2,&expenses2,str2);
+		printf("%d,%ld,%ld,%s\n", lineNo2, incomes2 - incomes1, expenses2 - expenses1, str2);
+		lineNo1 = lineNo2;
+		incomes1 = incomes2;
+		expenses1 = expenses2;
+		strcpy(str1,str2);
+	}	
 	fclose(file);
 }
 
