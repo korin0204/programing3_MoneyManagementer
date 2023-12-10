@@ -8,5 +8,6 @@ void init_struct(moneyData *a);
 void make_dir();
 int count_lines(const char *path);
 void set_today();
+void set_day(int, int, int);
 
 #endif

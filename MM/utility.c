@@ -14,10 +14,11 @@ void put_time(void)
 }
 
 // 指定されたパスのファイルが存在するかどうかを確認する関数
+// 存在する場合は1を返す
+// 存在しない場合は0を返す
 int file_exists(const char *path)
 {
 	FILE *fp;
-
 	fp = fopen(path, "r");
 	if (fp == NULL)
 	{
@@ -42,22 +43,15 @@ void init_struct(moneyData *a)
 	int day = timer->tm_mday;
 	FILE *fp;
 	char filename[200];
-	make_dir();
-	printf("./archives/%d/%02d/%d%02d%02d.csv", year, month, year, month, day);
-	sprintf(filename, "./archives/%d/%02d/%d%02d%02d.csv", year, month, year, month, day);
+	// make_dir();
+	// printf("./.archives/%d/%02d/%d%02d%02d.csv", year, month, year, month, day);
+	sprintf(filename, "./.archives/%d/%02d/%d%02d%02d.csv", year, month, year, month, day);
 	switch (file_exists(filename))
 	{
 	case 0: // ファイルが存在しない場合(初期化をしてbreakしずに次のcaseに移る)
+		make_dir();
 		fp = fopen(filename, "w");
-		if (fp == NULL)
-		{
-			printf("ファイルをオープンできません。\n");
-			fprintf(fp, "0,0,0,0\n");
-		}
-		else
-		{
-			fprintf(fp, "0,0,0,0\n");
-		}
+		fprintf(fp, "0,0,0,0\n");
 		fclose(fp);
 	case 1: // ファイルが存在する場合
 		fp = fopen(filename, "r");
@@ -71,13 +65,7 @@ void init_struct(moneyData *a)
 	}
 }
 
-//ディレクトリを作成する関数
-//上位のディレクトリーが存在しない場合は、再帰的にディレクトリを作成する
-//作成したいディレクトリは、今日の年月を参考に./yyyy/mmである
-//まずは、mmのディレクトリを確認して、上位のyyyyのディレクトリが存在しない場合は、yyyyのディレクトリを作成する
-//yyyyのディレクトリが存在する場合は、mmのディレクトリを作成する
-//mmのディレクトリが存在する場合は、何もしない
-//どのOSでも使える
+// ディレクトリを作成する関数
 void make_dir(void)
 {
 	time_t current = time(NULL);
@@ -85,25 +73,31 @@ void make_dir(void)
 	int year = timer->tm_year + 1900;
 	int month = timer->tm_mon + 1;
 	char dir[200];
-	int n = 0;
-    while(n <= 2){
-    sprintf(dir, "./archives/%d/%02d", year, month);
-	if (mkdir(dir, 0777) == -1)
+	printf("0\n");
+	sprintf(dir, "./.archives/%d", year);
+	if (mkdir(dir, 0777) == 0)
 	{
-		sprintf(dir, "./archives/%d", year);
-		if (mkdir(dir, 0777) == -1)
+		printf("1\n");
+		sprintf(dir, "./.archives/%d/%02d", year, month);
+		if (mkdir(dir, 0777) == 0)
 		{
-			printf("重要なディレクトリーが存在しません\n");
+			printf("2\n");
 		}
-		n++;
-		continue;
 	}
-	n+=2;
+	else
+	{
+		sprintf(dir, "./.archives/%d/%02d", year, month);
+		if (mkdir(dir, 0777) == 0)
+		{
+			printf("3\n");
+		}
+		else if (mkdir(dir, 0777) == -1 && file_exists(dir) == 0)
+		{
+			printf("4\n");
+			printf("ErrorCode:NotFound'./.archives'folder\n");
+		}
+	}
 }
-		//存在する時も表示される
-		printf("ディレクトリーを作成しました\n");
-}
-
 
 // ファイルの行数を返す関数
 int count_lines(const char *path)
@@ -131,7 +125,7 @@ int count_lines(const char *path)
 	}
 }
 
-//グローバル変数に今日の日付を代入する関数
+// グローバル変数に今日の日付を代入する関数
 void set_today(void)
 {
 	time_t current = time(NULL);
@@ -139,4 +133,11 @@ void set_today(void)
 	GlobalYear = timer->tm_year + 1900;
 	GlobalMonth = timer->tm_mon + 1;
 	GlobalDay = timer->tm_mday;
+}
+// グローバル変数に指定された日付を代入する関数
+void set_day(int year, int month, int day)
+{
+	GlobalYear = year;
+	GlobalMonth = month;
+	GlobalDay = day;
 }

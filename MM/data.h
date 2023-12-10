@@ -4,7 +4,6 @@
 extern int GlobalYear;
 extern int GlobalMonth;
 extern int GlobalDay;
-extern char GlobalFilename[200];
 
 typedef struct{
     char userName[100];

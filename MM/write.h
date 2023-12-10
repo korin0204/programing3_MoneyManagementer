@@ -3,7 +3,7 @@
 #include "data.h"
 
 void write_money(moneyData *a);
-void write_plan();
+//void write_plan();
 void edit_money();
 
 #endif
